@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Check if the string "[url" is not present in ~/.gitconfig
+if ! grep -q "\[url" ~/.gitconfig; then
+    # Prompt the user for their GitHub access token
+    read -p "Enter your GitHub access token: " github_token
+
+    # Append GitHub access token to ~/.gitconfig
+    echo -e "[url \"https://github.com/\"]\n\ttoken = $github_token" >> ~/.gitconfig
+fi
+
+# Check if two arguments are provided
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <folder_name> <shell_command>"
+    exit 1
+fi
+
+# Extract folder name and shell command from command line arguments
+folder_name="$1"
+shell_command="$2"
+
+# Create the folder if it doesn't exist
+if [ ! -d "$folder_name" ]; then
+    mkdir "$folder_name"
+fi
+
+# Create the shebang line
+echo "#!/bin/bash" > "$folder_name/$folder_name.sh"
+
+# Append the shell command
+echo "$shell_command" >> "$folder_name/$folder_name.sh"
+
+# Make the file executable
+chmod +x "$folder_name/$folder_name.sh"
+
+echo "Script has been created in the folder '$folder_name' and made executable."
+
